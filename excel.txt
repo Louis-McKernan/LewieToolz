@@ -1,0 +1,24 @@
+=LET(
+    _rangeEnd, COUNTA(C:C),
+    _requestBy, C2:INDEX(C:C, _rangeEnd),
+    _userEmails, B2:INDEX(B:B, _rangeEnd),
+    _validRequestBy, UNIQUE(FILTER(_requestBy, _requestBy <> "")),
+    _validUserEmails, UNIQUE(FILTER(_userEmails, _userEmails <> "")),
+    _countUsers, COUNTA(_validUserEmails),
+    _first, INDEX(_validUserEmails, 1),
+    _last, INDEX(_validUserEmails, _countUsers),
+    _formatList, LAMBDA(list,
+        IF(
+            COUNTA(list) > 2,
+            TEXTJOIN(", ", TRUE, TAKE(list, COUNTA(list)-1)) & " and " & INDEX(list, COUNTA(list)),
+            TEXTJOIN(" and ", TRUE, list)
+        )
+    ),
+    _requestedBy, _formatList(_validRequestBy),
+    _body,
+        "Requested By: " & _requestedBy & CHAR(10) &
+        "Added " & _countUsers & " users" & CHAR(10) &
+        "First: " & _first & CHAR(10) &
+        "Last: " & _last,
+    _body
+)
