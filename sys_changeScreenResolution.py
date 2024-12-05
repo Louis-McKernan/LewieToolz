@@ -2,7 +2,7 @@ import ctypes
 from ctypes import wintypes
 
 def change_screen_resolution(width, height):
-    """Change the screen resolution."""
+    """Change the screen resolution and center it on the display."""
     class DEVMODE(ctypes.Structure):
         _fields_ = [
             ("dmDeviceName", wintypes.WCHAR * 32),
@@ -46,17 +46,18 @@ def change_screen_resolution(width, height):
         print("Unable to fetch display settings.")
         return
 
-    # Update the resolution
+    # Update the resolution and set centering
     devmode.dmPelsWidth = width
     devmode.dmPelsHeight = height
     devmode.dmFields = 0x00080000 | 0x00100000  # DM_PELSWIDTH | DM_PELSHEIGHT
+    devmode.dmDisplayFixedOutput = 2  # DMDFO_CENTER (center the resolution)
 
     result = user32.ChangeDisplaySettingsW(ctypes.byref(devmode), 1)  # CDS_UPDATEREGISTRY
     if result == 0:  # DISP_CHANGE_SUCCESSFUL
-        print(f"Screen resolution changed to {width}x{height}.")
+        print(f"Screen resolution changed to {width}x{height}, centered.")
     else:
         print("Failed to change screen resolution.")
 
 if __name__ == "__main__":
-    # Example: Change resolution to 1920x1080
-    change_screen_resolution(1920, 1080)
+    # Example: Change resolution to 1280x720 and center it
+    change_screen_resolution(1280, 720)
